@@ -158,17 +158,10 @@ def get_billing_address(party_type, party):
     if billing_address_name:
         billing_address = frappe.get_doc("Address", billing_address_name)
     else:
-        return out  
+        return None  
                            
     if billing_address:
-            out["billing_line1"] = billing_address.address_line1
-            out["billing_line2"] = billing_address.address_line2
-            out["billing_city"] = billing_address.city
-            out["billing_county"] = billing_address.county
-            out["billing_state"] = billing_address.state
-            out["billing_zipcode"] = billing_address.pincode
-            out["billing_country"] = billing_address.country
-    return out
+        return billing_address
 
 def get_ar_filters(doc, entry):
     return {

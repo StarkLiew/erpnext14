@@ -16,17 +16,45 @@
 	<h2 class="text-center">{{ _("STATEMENTS OF ACCOUNTS") }}</h2>
 	<div>
 		{% if filters.party[0] == filters.party_name[0] %}
-			<h5 style="float: left;">{{ _("Customer: ") }} <b>{{ filters.party_name[0] }}</b></h5>
+			<h5>{{ _("Customer: ") }} <b>{{ filters.party_name[0] }}</b></h5>			
 		{% else %}
 			<h5 style="float: left;">{{ _("Customer: ") }} <b>{{ filters.party[0] }}</b></h5>
 			<h5 style="float: left; margin-left:15px">{{ _("Customer Name: ") }} <b>{{filters.party_name[0] }}</b></h5>
 		{% endif %}
 		<h5 style="float: right;">
+			{{ _("Page: ") }}
+			<b>1</b>
+		</h5>
+		<h5 style="float: right;">
 			{{ _("Date: ") }}
-			<b>{{ frappe.format(filters.from_date, 'Date')}}
-			{{ _("to") }}
-			{{ frappe.format(filters.to_date, 'Date')}}</b>
-			</h5>
+			<b> {{ frappe.format(filters.to_date, 'Date')}}</b>
+		</h5>
+	   <h6>
+	   {% if (filters.billing_address) %}
+			{% if (filters.billing_address.address_line1) %}
+				{{ filters.billing_address.address_line1 }} <br />
+			{% endif %}
+			{% if (filters.billing_address.address_line2) %}
+				{{ filters.billing_address.address_line2 }} <br />
+			{% endif %}     
+			{% if (filters.billing_address.pincode) %}
+					{{ filters.billing_address.pincode }} &nbsp;
+					{% if (filters.billing_address.county) %}
+						{{ filters.billing_address.county }} <br />
+					{% endif %}
+					{% if (filters.billing_address.city) %}
+						{{ filters.billing_address.city }} <br />
+					{% endif %}
+			{% endif %}
+			{% if (filters.billing_address.state) %}
+					{{ filters.billing_address.state }} &nbsp;
+					{% if (filters.billing_address.country) %}
+						{{ filters.billing_address.country }} 
+					{% endif %}
+			{% endif %}   
+	   {% endif %}
+	   </h6>
+
 	</div>
 	<br>
 
