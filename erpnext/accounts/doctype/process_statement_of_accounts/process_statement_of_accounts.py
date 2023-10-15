@@ -129,7 +129,7 @@ def get_gl_balance(from_date, to_date, company):
     if to_date == None:
         filter = {"posting_date": ("<", from_date), "is_cancelled": 0, "party": company}
     else:
-        filter = {"posting_date": (">=", from_date), "posting_date": ("<=", to_date), "is_cancelled": 0, "party": company}
+        filter = {"posting_date": ["between", (from_date, to_date)], "is_cancelled": 0, "party": company}
     gl_balance_map = frappe._dict(
         frappe.db.get_all(
             "GL Entry",

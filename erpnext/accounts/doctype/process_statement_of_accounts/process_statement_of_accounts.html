@@ -112,16 +112,14 @@
 	<br>
 	{% if ageing %}
 	  {% if (ageing.ageing_based_on == "Months") %}
-	    <table class="table table-bordered">
+	    <table class="table table-bordered" style="font-size: 10px">
 			{% for idx, month in enumerate(ageing.months) %}
-			  {% if idx mod 4 == 0   %}
+			  {% if ((idx + 1) == 1 or (idx + 1) == 5 or (idx + 1) == 9) or (idx + 1) == 13 %}
 			    <tr>
 			  {% endif %}
-					<td>{{ month.name }} {{ month.year }}</td>
-					<td>{{ month.due }}</td>
-			  {% if idx mod 4 == 0   %}
-				</tr>
-			  {% endif %}
+					<td style="width: 5%">{{ month.name }} {{ month.year }}: </td>
+					<td style="width: 10%; text-align: right">{{ frappe.utils.fmt_money(month.due, currency=filters.presentation_currency) }}</td>
+
 			{% endfor %}
 	    </table>
 	  {% else %}
