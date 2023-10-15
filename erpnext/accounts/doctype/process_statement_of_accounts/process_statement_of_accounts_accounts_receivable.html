@@ -24,14 +24,44 @@
 	</div>
 
 	<h2 class="text-center" style="margin-top:0">{{ _(report.report_name) }}</h2>
-	<h4 class="text-center">
+	<h4>
 		{{ filters.customer_name }}
 	</h4>
-	<h6 class="text-center">
+	<h6>
 		{% if (filters.tax_id) %}
 		{{ _("Tax Id: ") }}{{ filters.tax_id }}
 		{% endif %}
 	</h6>
+
+	{% if (filters.billing_address) %}
+	   {% if (filters.billing_address["billing_line1"]) %}
+	       <h6>{{ filters.billing_address["billing_line1"] }}</h6>
+	   {% endif %}
+	   {% if (filters.billing_address["billing_line1"] ) %}
+	       <h6>{{ filters.billing_address["billing_line2"] }}</h6>
+       {% endif %}     
+	   {% if (filters.billing_address["zipcode"]) %}
+	       <h6>
+			  {{ filters.billing_address["zipcode"] }} &nbsp;
+			  {% if (filters.billing_address["county"]) %}
+			      {{ filters.billing_address["county"] }}
+			  {% endif %}
+			  {% if (filters.billing_address["city"]) %}
+		    	  {{ filters.billing_address["city"] }}
+		      {% endif %}
+		   </h6>
+       {% endif %}
+	   {% if (filters.billing_address["state"] ) %}
+	       <h6>
+			  {{ filters.billing_address["state"] }} &nbsp;
+			  {% if (filters.billing_address["country"]) %}
+			     {{ filters.billing_address["country"] }}
+		      {% endif %}
+
+		   </h6>
+       {% endif %}   
+	{% endif %}
+
 	<h5 class="text-center">
 		{{ _(filters.ageing_based_on) }}
 		{{ _("Until") }}
