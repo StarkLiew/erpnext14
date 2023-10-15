@@ -111,27 +111,36 @@
 	</table>
 	<br>
 	{% if ageing %}
-	<h4 class="text-center">{{ _("Ageing Report based on ") }} {{ ageing.ageing_based_on }}
-		{{ _("up to " ) }}  {{ frappe.format(filters.to_date, 'Date')}}
-	</h4>
-	<table class="table table-bordered">
-		<thead>
-			<tr>
-				<th style="width: 25%">30 Days</th>
-				<th style="width: 25%">60 Days</th>
-				<th style="width: 25%">90 Days</th>
-				<th style="width: 25%">120 Days</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>{{ frappe.utils.fmt_money(ageing.range1, currency=filters.presentation_currency) }}</td>
-				<td>{{ frappe.utils.fmt_money(ageing.range2, currency=filters.presentation_currency) }}</td>
-				<td>{{ frappe.utils.fmt_money(ageing.range3, currency=filters.presentation_currency) }}</td>
-				<td>{{ frappe.utils.fmt_money(ageing.range4, currency=filters.presentation_currency) }}</td>
-			</tr>
-		</tbody>
-	</table>
+	  {% if (ageing.ageing_based_on == "Months") %}
+	    <table class="table table-bordered">
+			{% for month in ageing %}
+			    <td>{{ month.name }}</td>
+				<td>{{ month.due }}</td>
+			{% endfor %}
+	    </table>
+	  {% else %}
+		<h4 class="text-center">{{ _("Ageing Report based on ") }} {{ ageing.ageing_based_on }}
+			{{ _("up to " ) }}  {{ frappe.format(filters.to_date, 'Date')}}
+		</h4>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th style="width: 25%">30 Days</th>
+					<th style="width: 25%">60 Days</th>
+					<th style="width: 25%">90 Days</th>
+					<th style="width: 25%">120 Days</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{ frappe.utils.fmt_money(ageing.range1, currency=filters.presentation_currency) }}</td>
+					<td>{{ frappe.utils.fmt_money(ageing.range2, currency=filters.presentation_currency) }}</td>
+					<td>{{ frappe.utils.fmt_money(ageing.range3, currency=filters.presentation_currency) }}</td>
+					<td>{{ frappe.utils.fmt_money(ageing.range4, currency=filters.presentation_currency) }}</td>
+				</tr>
+			</tbody>
+		</table>
+		{% endif %}
 	{% endif %}
 	{% if terms_and_conditions %}
 	<div>

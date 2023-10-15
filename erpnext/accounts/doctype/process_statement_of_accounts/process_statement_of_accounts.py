@@ -3,6 +3,7 @@
 
 
 import copy
+import calendar
 
 import frappe
 from frappe import _
@@ -67,7 +68,10 @@ def get_statement_dict(doc, get_statement_dict=False):
 
     for entry in doc.customers:
         if doc.include_ageing:
-            ageing = set_ageing(doc, entry)
+            if doc.ageing_based_on == "Months":
+               ageing = set_ageing_in_months(doc, entry, doc.to_date.month, doc.to_date.year)
+            else:
+               ageing = set_ageing(doc, entry)
 
         tax_id = frappe.get_doc("Customer", entry.customer).tax_id
         presentation_currency = (
@@ -83,8 +87,10 @@ def get_statement_dict(doc, get_statement_dict=False):
             col, res = get_soa(filters)
             for x in [0, -2, -1]:
                 res[x]["account"] = res[x]["account"].replace("'", "")
-            if len(res) == 3:
-                continue
+            
+            # Comment to allow statement to be generate even GL is none data.
+            # if len(res) == 3:
+            #    continue
         else:
             filters.update(get_ar_filters(doc, entry))
             ar_res = get_ar_soa(filters)
@@ -93,11 +99,26 @@ def get_statement_dict(doc, get_statement_dict=False):
                 continue
 
         statement_dict[entry.customer] = (
-            [res, ageing] if get_statement_dict else get_html(doc, filters, entry, col, res, ageing)
+            [res, ageing] if get_statement_dict else get_html(doc, filters, entry, col, res, ageing, ageing_months)
         )
 
     return statement_dict
 
+def set_ageing_in_months(doc, entry, month, year):
+    months_due = []
+    months_due.append({ "month": month, "name": calendar.month_name[month], "due": 0 })
+    
+    for x in range(11):
+        month = month - 1
+        if (month == 0):
+           year = year - 1
+           month = 12
+            
+        from_month = frappe.utils.dateutils.parse_date(year + "-" + month + "-1")
+        to_month = frappe.utils.get_last_day(from_month)
+        months_due.append({ "month": month, "name": calendar.month_name[month], "due": 0 })
+    months_due.append({ "month": 13, "name": "> 12", "due": 0 })    
+    return months_due
 
 def set_ageing(doc, entry):
     ageing_filters = frappe._dict(

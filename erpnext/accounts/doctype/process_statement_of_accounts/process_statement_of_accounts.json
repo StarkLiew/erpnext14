@@ -197,7 +197,7 @@
    "fieldname": "ageing_based_on",
    "fieldtype": "Select",
    "label": "Ageing Based On",
-   "options": "Due Date\nPosting Date"
+   "options": "Due Date\nPosting Date\nMonths"
   },
   {
    "default": "0",
