@@ -113,9 +113,15 @@
 	{% if ageing %}
 	  {% if (ageing.ageing_based_on == "Months") %}
 	    <table class="table table-bordered">
-			{% for month in ageing.months %}
-			    <td>{{ month.name }} {{ month.year }}</td>
-				<td>{{ month.due }}</td>
+			{% for idx, month in enumerate(ageing.months) %}
+			  {% if idx mod 4 == 0   %}
+			    <tr>
+			  {% endif %}
+					<td>{{ month.name }} {{ month.year }}</td>
+					<td>{{ month.due }}</td>
+			  {% if idx mod 4 == 0   %}
+				</tr>
+			  {% endif %}
 			{% endfor %}
 	    </table>
 	  {% else %}
