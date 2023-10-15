@@ -4,6 +4,7 @@
 
 import copy
 import calendar
+import datetime
 
 import frappe
 from frappe import _
@@ -69,7 +70,9 @@ def get_statement_dict(doc, get_statement_dict=False):
     for entry in doc.customers:
         if doc.include_ageing:
             if doc.ageing_based_on == "Months":
-               ageing = set_ageing_in_months(doc, entry, doc.to_date.month, doc.to_date.year)
+               ageing = { "ageing_based_on": doc.ageing_based_on,
+                          "months": set_ageing_in_months(doc, entry, doc.to_date.month, doc.to_date.year)
+                         }
             else:
                ageing = set_ageing(doc, entry)
 
@@ -99,7 +102,7 @@ def get_statement_dict(doc, get_statement_dict=False):
                 continue
 
         statement_dict[entry.customer] = (
-            [res, ageing] if get_statement_dict else get_html(doc, filters, entry, col, res, ageing, ageing_months)
+            [res, ageing] if get_statement_dict else get_html(doc, filters, entry, col, res, ageing)
         )
 
     return statement_dict
@@ -114,7 +117,7 @@ def set_ageing_in_months(doc, entry, month, year):
            year = year - 1
            month = 12
             
-        from_month = frappe.utils.dateutils.parse_date(year + "-" + month + "-1")
+        from_month = datetime.datetime(year, month, 1)
         to_month = frappe.utils.get_last_day(from_month)
         months_due.append({ "month": month, "name": calendar.month_name[month], "due": 0 })
     months_due.append({ "month": 13, "name": "> 12", "due": 0 })    
