@@ -114,7 +114,7 @@
 	  {% if (ageing.ageing_based_on == "Months") %}
 	    <table class="table table-bordered">
 			{% for month in ageing.months %}
-			    <td>{{ month.name }}</td>
+			    <td>{{ month.name }} {{ month.year }}</td>
 				<td>{{ month.due }}</td>
 			{% endfor %}
 	    </table>

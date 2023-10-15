@@ -70,9 +70,9 @@ def get_statement_dict(doc, get_statement_dict=False):
     for entry in doc.customers:
         if doc.include_ageing:
             if doc.ageing_based_on == "Months":
-               ageing = { "ageing_based_on": doc.ageing_based_on,
+               ageing = [{ "ageing_based_on": doc.ageing_based_on,
                           "months": set_ageing_in_months(doc, entry, doc.to_date.month, doc.to_date.year)
-                         }
+                         }]
             else:
                ageing = set_ageing(doc, entry)
 
@@ -109,19 +109,35 @@ def get_statement_dict(doc, get_statement_dict=False):
 
 def set_ageing_in_months(doc, entry, month, year):
     months_due = []
-    months_due.append({ "month": month, "name": calendar.month_name[month], "due": 0 })
+    months_due.append({ "month": month, "year": year, "name": calendar.month_name[month], "due": get_gl_balance(from_date, to_date, entry.customer) })
     
     for x in range(11):
         month = month - 1
         if (month == 0):
            year = year - 1
            month = 12
-            
-        from_month = datetime.datetime(year, month, 1)
-        to_month = frappe.utils.get_last_day(from_month)
-        months_due.append({ "month": month, "name": calendar.month_name[month], "due": 0 })
-    months_due.append({ "month": 13, "name": "> 12", "due": 0 })    
+        
+        from_date = datetime.datetime(year, month, 1)
+        to_date = frappe.utils.get_last_day(from_month)
+        months_due.append({ "month": month, "year": year, "name": calendar.month_name[month, "due": get_gl_balance(from_date, to_date, entry.customer) })
+    months_due.append({ "month": 13, "name": "> 12", "due": get_gl_balance(from_date, None, entry.customer) })    
     return months_due
+    
+def get_gl_balance(from_date, to_date, company):
+    if to_date == None:
+        filter = {"posting_date": ("<", from_date), "is_cancelled": 0, "company": company}
+    else:
+        filter = {"posting_date": (">=", from_date), "posting_date": ("<=", to_date), "is_cancelled": 0, "company": company}
+	gl_balance_map = frappe._dict(
+		frappe.db.get_all(
+			"GL Entry",
+			fields=["party", "sum(debit -  credit)"],
+			filters=filter,
+			group_by="party",
+			as_list=1,
+		)
+	)
+    return gl_balance_map.get([company])
 
 def set_ageing(doc, entry):
     ageing_filters = frappe._dict(
